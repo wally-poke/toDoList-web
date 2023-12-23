@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Todo List</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Open+Sans&family=Play&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        
+        *{
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        #submit-btn:hover{
+            background-color: #F6F7C4;
+        }
+
+        .query-container{
+            display:flex;
+            padding:20px;
+            justify-content: center;
+            background-color: #7BD3EA;
+        }
+
+        .card-container{
+            background-color: #A1EEBD;
+            padding:20px;
+            min-height:80vh;
+        }
+        .card-item{
+            display: inline-block;
+            background-color: #F6F7C4;
+            width:26%;
+            margin : 2% 2%;
+            padding: 1% 1%;
+            height: 20vh;
+            overflow: scroll;
+            position: relative;
+            box-shadow: 5px 5px 10px grey;
+        }
+
+        .strike{
+            text-decoration: line-through;
+        }
+        
+        .bg-grey{
+            background-color: darkgrey;
+        }
+
+        .delete-button{
+            background-color:#F6D6D6;
+            position: absolute;
+            right:10px;
+            top:0px;
+            border-radius: 75%;
+            height:auto;
+        }
+
+        .card-item > .delete-button{
+            visibility: hidden;
+        }
+        .card-item:hover > .delete-button{
+            visibility: visible;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="query-container">
+        <input type="text" id="todo-item" name="name" value="Read a book" placeholder="Write to-do list">
+        <button type="submit" value="Submit" id="submit-btn">submit</button>
+    </div>
+
+    <div class="card-container">
+        <!-- empty -->
+    </div>
+    <footer>Tip : You can press ctrl+enter to submit the to-do list instead of submit button</footer>
+
+
+<script>
+
+    function getCardItem(){
+        const cardItemElement = document.createElement("div");
+        cardItemElement.classList.add('card-item')
+
+        // Content 1 
+        var toDoItem = document.getElementById("todo-item").value
+
+    
+        const textContent = document.createTextNode(toDoItem);
+        const spanElement = document.createElement("span");
+        spanElement.appendChild(textContent)
+
+        // Content 2
+        const buttonElement = document.createElement("button");
+        buttonElement.classList.add('delete-button')
+        buttonElement.setAttribute("value","\u00D7")
+        buttonElement.appendChild(document.createTextNode("\u00D7"))
+        buttonElement.setAttribute("data-clickcount","0")
+
+        buttonElement.addEventListener("click",function(event){
+            // Get the parent element
+            var curClickCount = (this.getAttribute("data-clickcount"))
+            switch (curClickCount){
+                case "0":
+                    let spanElement = cardItemElement.getElementsByTagName("span")[0]
+                    console.log(spanElement)
+                    cardItemElement.classList.add("bg-grey")
+                    spanElement.classList.add("strike")
+                    break
+
+                case "1":
+                    let cardItem = this.parentElement
+                    let cardContainer = cardItem.parentElement
+                    cardContainer.removeChild(cardItem)
+                }
+            console.log(`Before : ${curClickCount}`)
+            this.setAttribute("data-clickcount",String(parseInt(curClickCount) + 1))
+            console.log(`After : ${curClickCount}`)
+        })
+        
+        const text2 = document.createTextNode("Delete");
+
+        // append child 
+        cardItemElement.appendChild(spanElement)
+        cardItemElement.appendChild(buttonElement)
+
+        return cardItemElement
+    }
+
+    const cardContainer = document.getElementsByClassName("card-container")[0]
+    submitBtn = document.getElementById("submit-btn")
+
+    // Press submit button to add the card item
+    submitBtn.addEventListener("click",function(){
+        // Start interacti with card container
+        var todoList = document.getElementById("todo-item").value 
+        if (todoList != ""){
+            var cardItem = getCardItem()
+            cardContainer.appendChild(cardItem)
+            // Clear the input
+            document.getElementById("todo-item").value = ""
+        }
+        else{
+            alert("Todo list cannot be empty")
+        }
+    })
+
+    // Press control + enter to add the card item
+    document.addEventListener('keydown', (event) => {
+        console.log(event)
+        if(event.ctrlKey && event.key == "Enter") {
+            var cardItem = getCardItem()
+            cardContainer.appendChild(cardItem)
+            // Clear the input
+            document.getElementById("todo-item").value = ""
+      }
+    });
+    
+</script>
+</body>
+</html>
